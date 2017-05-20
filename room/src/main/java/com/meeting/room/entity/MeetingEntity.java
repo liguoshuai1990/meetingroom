@@ -1,14 +1,10 @@
 package com.meeting.room.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 
-@Entity
 public class MeetingEntity implements Serializable {
-    @Id
-    @GeneratedValue
+
     private String id;             /* ID */
-    @Column(nullable = false)
     private String Name;
     private String State;          /* 会议状态 */
     private String RequestPerson;  /* 预定人 */
