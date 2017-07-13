@@ -4,11 +4,11 @@ import java.util.Calendar;
 import android.content.Context;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-public class DigitalClock extends TextView {
+public class DigitalClock extends AppCompatTextView {
 	private Calendar mCalendar;
 	private Runnable mTicker;
 	private Handler mHandler;
@@ -41,7 +41,6 @@ public class DigitalClock extends TextView {
 				setText(DateFormat.format("yyyy.M.d hh:mm:ss", mCalendar));
 				invalidate();
 				long now = SystemClock.uptimeMillis();
-				// long next = now + (1000 - now % 1000);
 				long next = now + (1000 - System.currentTimeMillis() % 1000);
 				mHandler.postAtTime(mTicker, next);
 			}

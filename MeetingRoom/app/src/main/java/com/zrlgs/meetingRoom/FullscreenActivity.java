@@ -2,23 +2,26 @@ package com.zrlgs.meetingRoom;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
-public class FullscreenActivity extends AppCompatActivity {
+
+public class FullScreenActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     Fragment mCurrentMeetingRoom;
     Fragment mOtherFreeMeetingRoom;
     Button leftButton;
     Button rightButton;
+    MeetingService meetingService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +33,18 @@ public class FullscreenActivity extends AppCompatActivity {
         leftButton = (Button) findViewById(R.id.btn_left);
         rightButton = (Button) findViewById(R.id.btn_right);
 
+
+//        //绑定Service
+        Intent intent = new Intent(FullScreenActivity.this, MeetingService.class);
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
+
+//        ArrayList<MeetingDataEntity> meetingData = meetingService.getdata();
+
         // Use FragmentManager to control fragments.
         fragmentManager = getFragmentManager();
-        mCurrentMeetingRoom = new CurrentMeetingRoomFragment();
-        mOtherFreeMeetingRoom = new OtherFreeRoomFragment();
+        mCurrentMeetingRoom = new CurrentMeetingFragment();
+        mOtherFreeMeetingRoom = new FreeMeetingRoomFragment();
 
         fragmentManager.beginTransaction().
                 add(R.id.layout_main_frame, mCurrentMeetingRoom, "CURRENT_ROOM").commit();
@@ -85,4 +96,16 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
     }
+
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            meetingService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            meetingService = ((MeetingService.MeetingBinder)service).getService();
+        }
+    };
 }
