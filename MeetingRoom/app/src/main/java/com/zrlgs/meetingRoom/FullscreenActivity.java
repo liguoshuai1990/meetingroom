@@ -14,6 +14,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class FullScreenActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
@@ -22,6 +25,7 @@ public class FullScreenActivity extends AppCompatActivity {
     Button leftButton;
     Button rightButton;
     MeetingService meetingService;
+    ArrayList<MeetingDataEntity> meetingData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +37,20 @@ public class FullScreenActivity extends AppCompatActivity {
         leftButton = (Button) findViewById(R.id.btn_left);
         rightButton = (Button) findViewById(R.id.btn_right);
 
-
-//        //绑定Service
+        //绑定Service
         Intent intent = new Intent(FullScreenActivity.this, MeetingService.class);
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
-
-
-//        ArrayList<MeetingDataEntity> meetingData = meetingService.getdata();
 
         // Use FragmentManager to control fragments.
         fragmentManager = getFragmentManager();
         mCurrentMeetingRoom = new CurrentMeetingFragment();
         mOtherFreeMeetingRoom = new FreeMeetingRoomFragment();
+
+        View view = View.inflate(this, R.layout.fragment_current_mettingroom, null);
+        MeetingDataAdapter meetingAdapter = new MeetingDataAdapter(meetingData, getApplicationContext());
+        ListView listView = (ListView) view.findViewById(R.id.meeting_information_list);
+        listView.setAdapter(meetingAdapter);
+
 
         fragmentManager.beginTransaction().
                 add(R.id.layout_main_frame, mCurrentMeetingRoom, "CURRENT_ROOM").commit();
@@ -106,6 +112,12 @@ public class FullScreenActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             meetingService = ((MeetingService.MeetingBinder)service).getService();
+            meetingService.setCallback(new MeetingService.Callback() {
+                @Override
+                public void setData(ArrayList<MeetingDataEntity> myData) {
+                    meetingData = myData;
+                }
+            });
         }
     };
 }
