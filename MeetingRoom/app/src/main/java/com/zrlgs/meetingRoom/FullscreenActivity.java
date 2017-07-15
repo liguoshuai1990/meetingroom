@@ -21,11 +21,10 @@ import java.util.ArrayList;
 public class FullScreenActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     Fragment mCurrentMeetingRoom;
-    Fragment mOtherFreeMeetingRoom;
+    Fragment mFreeMeetingRoom;
     Button leftButton;
     Button rightButton;
     MeetingService meetingService;
-    ArrayList<MeetingDataEntity> meetingData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +43,20 @@ public class FullScreenActivity extends AppCompatActivity {
         // Use FragmentManager to control fragments.
         fragmentManager = getFragmentManager();
         mCurrentMeetingRoom = new CurrentMeetingFragment();
-        mOtherFreeMeetingRoom = new FreeMeetingRoomFragment();
-
-        View view = View.inflate(this, R.layout.fragment_current_mettingroom, null);
-        MeetingDataAdapter meetingAdapter = new MeetingDataAdapter(meetingData, getApplicationContext());
-        ListView listView = (ListView) view.findViewById(R.id.meeting_information_list);
-        listView.setAdapter(meetingAdapter);
-
+        mFreeMeetingRoom = new FreeMeetingRoomFragment();
 
         fragmentManager.beginTransaction().
                 add(R.id.layout_main_frame, mCurrentMeetingRoom, "CURRENT_ROOM").commit();
         fragmentManager.beginTransaction().
-                add(R.id.layout_main_frame, mOtherFreeMeetingRoom, "OTHER_FREE_ROOM").commit();
+                add(R.id.layout_main_frame, mFreeMeetingRoom, "OTHER_FREE_ROOM").commit();
         fragmentManager.beginTransaction().
-                hide(mOtherFreeMeetingRoom).show(mCurrentMeetingRoom).commit();
+                hide(mFreeMeetingRoom).show(mCurrentMeetingRoom).commit();
 
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentManager.beginTransaction().
-                        hide(mOtherFreeMeetingRoom).show(mCurrentMeetingRoom).commit();
+                        hide(mFreeMeetingRoom).show(mCurrentMeetingRoom).commit();
                 leftButton.setBackground(
                         ContextCompat.getDrawable(getBaseContext(), R.drawable.left_button_click_shape));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -74,9 +67,9 @@ public class FullScreenActivity extends AppCompatActivity {
                 rightButton.setBackground(
                         ContextCompat.getDrawable(getBaseContext(), R.drawable.button_null_shape));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    leftButton.setTextColor(getColor(R.color.blue));
+                    rightButton.setTextColor(getColor(R.color.blue));
                 } else {
-                    leftButton.setTextColor(getResources().getColor(R.color.blue));
+                    rightButton.setTextColor(getResources().getColor(R.color.blue));
                 }
             }
         });
@@ -84,7 +77,14 @@ public class FullScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fragmentManager.beginTransaction().
-                        hide(mCurrentMeetingRoom).show(mOtherFreeMeetingRoom).commit();
+                        hide(mCurrentMeetingRoom).show(mFreeMeetingRoom).commit();
+                rightButton.setBackground(
+                        ContextCompat.getDrawable(getBaseContext(), R.drawable.button_click_shape));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rightButton.setTextColor(getColor(R.color.white));
+                } else {
+                    rightButton.setTextColor(getResources().getColor(R.color.white));
+                }
                 leftButton.setBackground(
                         ContextCompat.getDrawable(getBaseContext(), R.drawable.left_button_null_shape));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -92,13 +92,7 @@ public class FullScreenActivity extends AppCompatActivity {
                 } else {
                     leftButton.setTextColor(getResources().getColor(R.color.blue));
                 }
-                rightButton.setBackground(
-                        ContextCompat.getDrawable(getBaseContext(), R.drawable.button_click_shape));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    leftButton.setTextColor(getColor(R.color.white));
-                } else {
-                    leftButton.setTextColor(getResources().getColor(R.color.white));
-                }
+
             }
         });
     }
@@ -115,7 +109,13 @@ public class FullScreenActivity extends AppCompatActivity {
             meetingService.setCallback(new MeetingService.Callback() {
                 @Override
                 public void setData(ArrayList<MeetingDataEntity> myData) {
-                    meetingData = myData;
+                    View view = mCurrentMeetingRoom.getView();
+                    if (view != null) {
+                        ListView listView = (ListView) view.findViewById(R.id.meeting_information_list);
+                        MeetingDataAdapter meetingDataAdapter = (MeetingDataAdapter)listView.getAdapter();
+                        meetingDataAdapter.refresh(myData);
+                    }
+
                 }
             });
         }

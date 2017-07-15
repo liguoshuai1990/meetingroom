@@ -3,7 +3,7 @@
     android:id="@+id/layout_fullscreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@drawable/background4"
     tools:context="com.zrlgs.meetingRoom.FullScreenActivity"
     android:orientation="vertical">
 
@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:textSize="30sp"
+            android:textSize="80sp"
             android:layout_marginTop="10dp"
             android:text="会议室 2-01"
             android:textStyle="normal|bold" />
