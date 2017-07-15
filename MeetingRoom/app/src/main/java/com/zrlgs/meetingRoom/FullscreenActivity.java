@@ -108,14 +108,19 @@ public class FullScreenActivity extends AppCompatActivity {
             meetingService = ((MeetingService.MeetingBinder)service).getService();
             meetingService.setCallback(new MeetingService.Callback() {
                 @Override
-                public void setData(ArrayList<MeetingDataEntity> myData) {
+                public void setData(ArrayList<MeetingDataEntity> meetingData, ArrayList<MeetingRoomEntity> meetingRoom) {
                     View view = mCurrentMeetingRoom.getView();
                     if (view != null) {
                         ListView listView = (ListView) view.findViewById(R.id.meeting_information_list);
                         MeetingDataAdapter meetingDataAdapter = (MeetingDataAdapter)listView.getAdapter();
-                        meetingDataAdapter.refresh(myData);
+                        meetingDataAdapter.refresh(meetingData);
                     }
-
+                    View rView = mFreeMeetingRoom.getView();
+                    if (rView != null) {
+                        ListView listView = (ListView) rView.findViewById(R.id.free_meeting_room_list);
+                        FreeMeetingRoomAdapter freeMeetingRoomAdapter = (FreeMeetingRoomAdapter)listView.getAdapter();
+                        freeMeetingRoomAdapter.refresh(meetingRoom);
+                    }
                 }
             });
         }

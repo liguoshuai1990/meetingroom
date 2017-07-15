@@ -6,10 +6,12 @@
     <string name="button_current">今天会议</string>
     <string name="button_free">空闲会议室</string>
     <string name="project_name">会议名称:</string>
-    <string name="meeting_room">会议室名称:</string>
     <string name="meeting_state">会议状态:</string>
     <string name="deportment">部门:</string>
     <string name="reserved_person">预定人:</string>
     <string name="contact_type">联系方式:</string>
     <string name="sheduled_time">预定时间:</string>
+
+    <string name="meeting_room">会议室名称:</string>
+    <string name="meeting_room_site">会议室位置:</string>
 </resources>
